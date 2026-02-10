@@ -27,7 +27,13 @@ export default function RegisterPage() {
             const data = await res.json();
 
             if (!res.ok) {
-                setError(data.message || 'Registration failed');
+                let errorMessage = data.message || 'Registration failed';
+                if (data.errors) {
+                    // Format Zod errors into a readable string
+                    const details = Object.values(data.errors).flat().join(', ');
+                    errorMessage += `: ${details}`;
+                }
+                setError(errorMessage);
                 setLoading(false);
             } else {
                 // Redirect to login on success
