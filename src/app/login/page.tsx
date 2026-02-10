@@ -21,12 +21,12 @@ export default function LoginPage() {
             // Use NextAuth signIn
             const result = await signIn('credentials', {
                 redirect: false,
-                email,
+                email, // This field is mapped to 'identifier' logic on server
                 password,
             });
 
             if (result?.error) {
-                setError('Invalid email or password');
+                setError('Invalid credentials');
                 setLoading(false);
             } else {
                 router.push('/dashboard');
@@ -77,9 +77,9 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Email</label>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Email or Username</label>
                         <input
-                            type="email"
+                            type="text"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required

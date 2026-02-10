@@ -6,10 +6,12 @@ import User from './models/User';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
-async function getUser(email: string) {
+async function getUser(identifier: string) {
     try {
         await dbConnect();
-        const user = await User.findOne({ email }).select('+password');
+        const user = await User.findOne({
+            $or: [{ email: identifier }, { username: identifier }]
+        }).select('+password');
         return user;
     } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -23,7 +25,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         Credentials({
             async authorize(credentials) {
                 const parsedCredentials = z
-                    .object({ email: z.string().email(), password: z.string().min(6) })
+                    .object({ email: z.string(), password: z.string().min(6) })
                     .safeParse(credentials);
 
                 if (parsedCredentials.success) {
